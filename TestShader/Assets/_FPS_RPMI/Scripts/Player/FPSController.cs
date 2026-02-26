@@ -112,6 +112,14 @@ public class FPSController : MonoBehaviour
 
     }
 
+    void Jump()
+    {
+        if (isGrounded) rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+    }
+
+
+
+
 
 
     #region Input Methods
@@ -126,7 +134,7 @@ public class FPSController : MonoBehaviour
     }
     public void OnJump(InputAction.CallbackContext context)
     {
-
+        if (context.performed) Jump();
     }
     public void OnCrouch(InputAction.CallbackContext context)
     {

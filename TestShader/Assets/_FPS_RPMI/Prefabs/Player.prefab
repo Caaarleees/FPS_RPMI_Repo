@@ -145,7 +145,19 @@ MonoBehaviour:
     m_ActionId: 2bec048b-7dc2-4b98-8129-387f73ddb2d6
     m_ActionName: 'Gameplay/Look[/Mouse/delta]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6702834644432019350}
+        m_TargetAssemblyTypeName: FPSController, Assembly-CSharp
+        m_MethodName: OnJump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 10a85f0a-d516-4de4-8469-c2be3323eeac
     m_ActionName: 'Gameplay/Jump[/Keyboard/space]'
   - m_PersistentCalls:
