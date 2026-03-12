@@ -57,7 +57,22 @@ public class EnemyAIBase : MonoBehaviour
     {
         //Método que se encarga de gestionar el cambio de estados del enemigo
 
-
+        //1 - Cambio de estado de los bools
+        //Primero detectamos si los target están en visión
+        Collider[] hits = Physics.OverlapSphere(transform.position, sightRange, targetLayer); 
+        targetInSightRange = hits.Length > 0;
+        //Segundo, si están en visión detectamos si además están en ataque
+        if (targetInSightRange)
+        {
+            float distance = Vector3.Distance(transform.position, target.position);
+            targetInAttackRange = distance <= attackRange;
+        }
+        else
+        {
+            targetInAttackRange = false;
+        }
+      
+           
 
         //2 - Cambio de estados según booleanos
         if (!targetInSightRange && !targetInAttackRange)
@@ -81,10 +96,46 @@ public class EnemyAIBase : MonoBehaviour
 
     void ChaseTarget()
     {
-
+        //Acción que le dice a la gente que persiga al target
+        agent.SetDestination(target.position);
     }
     void AttackTarget()
     {
-    
+       //Acción que contiene la lógica de ataque
+       //1 - Hacer que el agent se quede quieto (perseguirse a sí mismo)
+       agent.SetDestination(transform.position);
+        //2 - Aplicar una rotación suavizada para que el agente mire al target antes de atacar
+        Vector3 direction = (target.position - transform.position).normalized; 
+        if (direction != Vector3.zero) 
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(direction); 
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, agent.angularSpeed * Time.deltaTime); 
+        }
+
+        //3 - Se ataca (solo si no se esta atacando)
+        if (!alreadyAttacked)
+        {
+            Rigidbody rb = Instantiate(projectile, shootPoint.position, Quaternion.identity).GetComponent<Rigidbody>(); //Instancia la bala y obtiene su Rigidbody para aplicarle física
+            rb.AddForce(transform.forward * shootSpeedZ, ForceMode.Impulse); //Aplica fuerza hacia delante
+            alreadyAttacked = true; 
+            Invoke(nameof(ResetAttack), timeBetweenAttacks); 
+        }
     }
+
+   void ResetAttack()
+    {
+          alreadyAttacked = false; 
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (Application.isPlaying) return; //Si estamos jugando en build no se ejecuta el resto del código
+
+        Gizmos.color = Color.red; 
+        Gizmos.DrawWireSphere(transform.position, attackRange); 
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, sightRange);
+    }
+
+
 }
